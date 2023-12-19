@@ -1,5 +1,5 @@
 const fs = require("fs");
-fs.readFile("test.txt", "utf8", (error, data) => {
+fs.readFile("data.txt", "utf8", (error, data) => {
   if (error) console.error(error);
 
   const lines = data.split("\n");
@@ -8,7 +8,8 @@ fs.readFile("test.txt", "utf8", (error, data) => {
 
   for (let line of lines) {
     let splitLine = line.split(": ");
-    let id = splitLine[0].split(" ")[1];
+    let id = splitLine[0].replace("Card", "");
+    console.log(id);
     let nums = splitLine[1].split(" | ");
     let winNums = nums[0].split(" ");
     winNums = winNums.filter(isNotEmpty); //Filter out blanks
@@ -19,13 +20,25 @@ fs.readFile("test.txt", "utf8", (error, data) => {
   }
 
   //logic of winning new Cards
-  for (card of cards) {
+  for (let card of cards) {
+    console.log(`Card: ${card.id} with ${card.getCorrects()}`);
     let instances = card.instances;
     let corrects = card.getCorrects();
-    for (let i = card.index + 1; i <= card.index + corrects; i++) {
-      cards[i].CreateCopies(instances);
+    if (corrects === 0) continue;
+    for (let i = card.id; i < card.id + corrects; i++) {
+      if (i < cards.length) {
+        cards[i].createCopies(instances);
+        console.log(`creating ${instances} copies of ${cards[i].id}`);
+      }
     }
   }
+  //count all instances:
+  let count = 0;
+  for (card of cards) {
+    count += card.instances;
+    //console.log(card);
+  }
+  console.log(count);
 });
 
 function isNotEmpty(e) {
@@ -34,13 +47,13 @@ function isNotEmpty(e) {
 
 class Card {
   constructor(id, winNums, haveNums) {
-    this.id = id;
+    this.id = parseInt(id);
     this.winNums = winNums;
     this.haveNums = haveNums;
     this.instances = 1;
   }
 
-  CreateCopies(amount) {
+  createCopies(amount) {
     this.instances += amount;
   }
 
