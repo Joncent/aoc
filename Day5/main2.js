@@ -1,5 +1,5 @@
 const fs = require("fs");
-fs.readFile("data.txt", "utf8", (err, data) => {
+fs.readFile("test.txt", "utf8", (err, data) => {
   if (err) console.error(err);
 
   const lines = data.split("\n");
@@ -7,8 +7,6 @@ fs.readFile("data.txt", "utf8", (err, data) => {
   let seeds = lines[0].split(": ")[1];
   seeds = seeds.split(" ");
   seeds = seeds.map((el) => parseInt(el));
-
-  //TODO: new create newSeeds array
 
   //maps:
   const indices = [];
