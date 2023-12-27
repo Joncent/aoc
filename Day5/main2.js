@@ -1,5 +1,5 @@
 const fs = require("fs");
-fs.readFile("test.txt", "utf8", (err, data) => {
+fs.readFile("data.txt", "utf8", (err, data) => {
   if (err) console.error(err);
 
   const lines = data.split("\n");
@@ -7,6 +7,16 @@ fs.readFile("test.txt", "utf8", (err, data) => {
   let seeds = lines[0].split(": ")[1];
   seeds = seeds.split(" ");
   seeds = seeds.map((el) => parseInt(el));
+
+  let newSeeds = [];
+  //reorganize seeds according to second challenge
+  for (let i = 0; i <= seeds.length; i += 2) {
+    console.log(i);
+    for (let seed = seeds[i]; seed < seeds[i] + seeds[i + 1]; seed++)
+      newSeeds.push(seed);
+  }
+  seeds = newSeeds;
+  console.log(seeds);
 
   //maps:
   const indices = [];
@@ -18,8 +28,6 @@ fs.readFile("test.txt", "utf8", (err, data) => {
   indices[5] = lines.indexOf("temperature-to-humidity map:");
   indices[6] = lines.indexOf("humidity-to-location map:");
   indices[7] = lines.length + 1;
-
-  console.log(indices);
 
   const maps = [];
   for (let i = 0; i < 7; i++) {
