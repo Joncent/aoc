@@ -8,16 +8,6 @@ fs.readFile("data.txt", "utf8", (err, data) => {
   seeds = seeds.split(" ");
   seeds = seeds.map((el) => parseInt(el));
 
-  let newSeeds = [];
-  //reorganize seeds according to second challenge
-  for (let i = 0; i <= seeds.length; i += 2) {
-    console.log(i);
-    for (let seed = seeds[i]; seed < seeds[i] + seeds[i + 1]; seed++)
-      newSeeds.push(seed);
-  }
-  seeds = newSeeds;
-  console.log(seeds);
-
   //maps:
   const indices = [];
   indices[0] = lines.indexOf("seed-to-soil map:");
@@ -33,10 +23,7 @@ fs.readFile("data.txt", "utf8", (err, data) => {
   for (let i = 0; i < 7; i++) {
     let map = new Map();
     let mappingData = getMapData(indices[i] + 1, indices[i + 1] - 2);
-    //console.log(lines[indices[i]]);
-    //console.log(mappingData);
     for (const mapping of mappingData) {
-      console.log(mapping);
       map.addMapping(
         parseInt(mapping[0]),
         parseInt(mapping[1]),
@@ -46,26 +33,37 @@ fs.readFile("data.txt", "utf8", (err, data) => {
     maps.push(map);
   }
 
-  const seedLocationPairs = {};
+  maps.reverse();
+
+  let lowestLocation = Math.Infinity;
 
   //Check all seeds:
-  for (let seed of seeds) {
-    let oldSeed = seed;
+
+  for (let i = 0; i <= 1000000000; i++) {
+    let seed = i;
+    let location = i;
     for (let map of maps) {
-      seed = map.getDestFromSrc(seed);
+      seed = map.getSrcFromDest(seed);
     }
-    console.log(`final location of seed ${oldSeed} is ${seed}`);
-    seedLocationPairs[oldSeed] = seed;
+
+    const valid = seedInSeeds(seed);
+    //console.log(`seed: ${seed} location: ${location} valid: ${valid}`);
+
+    //checking if seed was valid
+    if (valid) {
+      console.log(`seed ${seed} is valid! location: ${location}`);
+
+      break;
+    }
   }
 
-  //Find lowest location number:
-  let minLoc = Infinity;
-  for (let seed in seedLocationPairs) {
-    seed = parseInt(seed);
-    minLoc = Math.min(minLoc, seedLocationPairs[seed]);
+  function seedInSeeds(seed) {
+    let result = false;
+    for (let i = 0; i <= seeds.length; i += 2) {
+      if (seed >= seeds[i] && seed <= seeds[i] + seeds[i + 1]) result = true;
+    }
+    return result;
   }
-
-  console.log(`lowest location number is: ${minLoc}`);
 
   function getMapData(startIndex, endIndex) {
     let arr = [];
@@ -94,5 +92,15 @@ class Map {
       }
     }
     return parseInt(src);
+  }
+
+  getSrcFromDest(dst) {
+    for (let mapping of this.dic) {
+      if (dst >= mapping[0] && dst <= mapping[0] + mapping[2]) {
+        let offset = dst - mapping[0];
+        return parseInt(mapping[1] + offset);
+      }
+    }
+    return parseInt(dst);
   }
 }
