@@ -58,13 +58,16 @@ class Hand {
     if (values.includes(4)) return 6;
     //Check for fullHouse:
     if (values.includes(3) && values.includes(2)) {
-      //doublechecking Problem, when the J is counted twice:
-      let tempValues = values;
+      if (!this.labels.includes(1)) return 5;
+      //doublechecking Problem, if the J is counted twice:
       let tempCounter = 0;
-      for (let j = 0; j < tempValues.length; j++) {
-        if (tempValues[j] == 3) tempCounter++;
+      for (let j = 0; j < values.length; j++) {
+        if (values[j] == 2) tempCounter++;
       }
-      if (tempCounter == 1) return 5;
+      if (!(tempCounter >= 2)) {
+        console.log("classified as Full House: " + this.labels);
+        return 5;
+      }
     }
     //Check for 3 of a kind:
     if (values.includes(3)) {

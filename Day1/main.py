@@ -15,9 +15,6 @@ def getLastDigit(string):
             digit = char
     return digit
 
-
-
-
 numbers = {
     "1": 1,
     "2": 2, 
